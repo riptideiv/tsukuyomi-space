@@ -11,7 +11,8 @@ const article = {
 
 async function openShare(page, baseURL, { clipboard = 'success', native = 'unavailable', legacy = false, qq = false } = {}) {
     const headers = { Origin: baseURL, 'X-Requested-With': 'XMLHttpRequest', 'Sec-Fetch-Site': 'same-origin' };
-    const login = await page.request.post('/api/auth/login', { headers, data: { username: 'e2e-user', password: 'e2e-password' } });
+    // Retry only transport resets during setup, not HTTP errors or sharing assertions.
+    const login = await page.request.post('/api/auth/login', { headers, data: { username: 'e2e-user', password: 'e2e-password' }, maxRetries: 2 });
     expect(login.ok()).toBe(true);
     await page.addInitScript(({ clipboard, native, legacy, qq }) => {
         localStorage.setItem('tsukuyomi_user', JSON.stringify({ id: 'e2e-user-001', username: 'e2e-user', role: 'user' }));

@@ -70,7 +70,8 @@ test('manual checks discover a new release; later failures keep working download
   await expect(page.locator('.download-version strong')).toHaveText(tag);
   failed = true;
   await page.getByRole('button', { name: '检查更新', exact: true }).click();
-  await expect(page.getByRole('status')).toContainText('保留上次获取的发行版');
+  // The boot splash also has role=status while it fades out.
+  await expect(page.getByRole('main').getByRole('status')).toContainText('保留上次获取的发行版');
   await expect(page.locator('[data-platform="android"] > .download-button')).toHaveAttribute('href', /\/v0\.6\.12-beta\.1\//);
 });
 
